@@ -1,5 +1,5 @@
 {
-  "name": "@gftdcojp/orpc-graphql",
+  "name": "@gftdcojp/orpc-graphql-gateway",
   "version": "0.1.0",
   "description": "oRPC routerからGraphQL schemaを自動生成するライブラリ",
   "type": "module",

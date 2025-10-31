@@ -1,39 +1,20 @@
 # Next.js統合例
 
-oRPC GraphQL EmitterをNext.jsプロジェクトに統合する方法です。
+oRPC GraphQL GatewayをNext.jsプロジェクトに統合する方法です。
 
 ## セットアップ
 
 ```bash
-pnpm add @gftdcojp/orpc-graphql graphql-yoga
+pnpm add @gftdcojp/orpc-graphql-gateway graphql graphql-yoga
 ```
 
-## GraphQLエンドポイントの作成
-
-`src/app/api/graphql/route.ts`:
-
-```typescript
-import { buildGraphQLSchemaFromOrpc } from "@gftdcojp/orpc-graphql";
-import { router } from "@/server/orpc";
-import { createYoga } from "graphql-yoga";
-
-const schema = buildGraphQLSchemaFromOrpc(router);
-
-const yoga = createYoga({
-  schema,
-  graphqlEndpoint: "/api/graphql",
-});
-
-export { yoga as GET, yoga as POST };
-```
-
-## oRPC routerの例
+## 1. oRPC routerの定義
 
 `src/server/orpc.ts`:
 
 ```typescript
-import { orpc } from "@orpc/runtime";
 import { z } from "zod";
+import { orpc } from "@orpc/server";
 
 export const router = orpc.router({
   getUser: orpc.procedure
@@ -71,5 +52,60 @@ export const router = orpc.router({
 });
 ```
 
+## 2. GraphQL Gatewayの生成
+
+`src/server/graphql.ts`:
+
+```typescript
+import { router } from "./orpc";
+import { orpcGraphQL } from "@gftdcojp/orpc-graphql-gateway";
+
+export const gql = orpcGraphQL(router);
+
+export const { schema, sdl, createHandler } = gql;
+```
+
+## 3. GraphQLエンドポイントの作成
+
+`src/app/api/graphql/route.ts`:
+
+```typescript
+import { createHandler } from "@/server/graphql";
+
+export { createHandler as GET, createHandler as POST };
+```
+
 これで `/api/graphql` エンドポイントが利用可能になります。
 
+## SDLの確認
+
+GraphQL SDLを確認したい場合：
+
+```typescript
+import { sdl } from "@/server/graphql";
+
+console.log(sdl);
+```
+
+## Federation対応
+
+Federationを有効にする場合：
+
+```typescript
+// src/server/graphql.ts
+import { router } from "./orpc";
+import { orpcGraphQL } from "@gftdcojp/orpc-graphql-gateway";
+
+export const gql = orpcGraphQL(router, {
+  federation: {
+    enabled: true,
+    keyBy: {
+      User: "id",
+    },
+  },
+});
+
+export const { schema, sdl, subgraphSDL, createHandler } = gql;
+```
+
+`subgraphSDL`をApollo Gatewayに投入します。
