@@ -1,0 +1,12 @@
+{
+  "name": "orpc-graphql-examples",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "run": "tsx run-example.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0"
+  }
+}
+
