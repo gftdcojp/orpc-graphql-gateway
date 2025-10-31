@@ -1,0 +1,46 @@
+{
+  "name": "@gftdcojp/orpc-graphql",
+  "version": "0.1.0",
+  "description": "oRPC routerからGraphQL schemaを自動生成するライブラリ",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write ."
+  },
+  "keywords": [
+    "orpc",
+    "graphql",
+    "schema",
+    "zod",
+    "rpc"
+  ],
+  "author": "gftdcojp",
+  "license": "MIT",
+  "dependencies": {
+    "graphql": "^16.9.0",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.8.3",
+    "@types/node": "^22.7.5",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.1"
+  },
+  "peerDependencies": {
+    "zod": "^4.1.12"
+  }
+}
+
