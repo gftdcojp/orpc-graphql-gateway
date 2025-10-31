@@ -98,7 +98,21 @@ function zodEnumToGraphQL(
   zodType: z.ZodEnum<any>,
   name: string,
 ): GraphQLEnumType {
-  const values = (zodType as any)._def.values;
+  // Zod v4では_def.valuesがundefinedで、_def.entriesを使う
+  const def = (zodType as any)._def;
+  let values: string[];
+  
+  if (def.values) {
+    // 旧バージョンとの互換性
+    values = Array.isArray(def.values) ? def.values : Object.keys(def.values);
+  } else if (def.entries) {
+    // Zod v4ではentriesが使われる
+    values = Array.isArray(def.entries) ? def.entries : Object.keys(def.entries);
+  } else {
+    // フォールバック: enumの型から値を推測
+    throw new Error(`Cannot extract enum values from ZodEnum: ${name}`);
+  }
+  
   return new GraphQLEnumType({
     name,
     values: Object.fromEntries(

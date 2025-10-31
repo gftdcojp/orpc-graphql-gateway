@@ -73,6 +73,23 @@ describe("zodToGraphQLInputType", () => {
     const gqlType = zodToGraphQLInputType(schema);
     expect(gqlType).toBe(GraphQLString);
   });
+
+  it("should handle enum types", () => {
+    const schema = z.enum(["A", "B", "C"]);
+    const gqlType = zodToGraphQLInputType(schema, "MyEnum");
+    expect(gqlType).toBeInstanceOf(GraphQLNonNull);
+    expect((gqlType as any).ofType.constructor.name).toBe("GraphQLEnumType");
+  });
+
+  it("should handle union types (input)", () => {
+    const schema = z.union([
+      z.object({ type: z.literal("A"), value: z.string() }),
+      z.object({ type: z.literal("B"), value: z.number() }),
+    ]);
+    const gqlType = zodToGraphQLInputType(schema, "UnionInput");
+    expect(gqlType).toBeInstanceOf(GraphQLNonNull);
+    expect((gqlType as any).ofType.constructor.name).toBe("GraphQLInputObjectType");
+  });
 });
 
 describe("zodToGraphQLOutputType", () => {
@@ -94,6 +111,16 @@ describe("zodToGraphQLOutputType", () => {
     expect(gqlType).toBeInstanceOf(GraphQLNonNull);
     expect((gqlType as any).ofType.constructor.name).toBe("GraphQLObjectType");
   });
+
+  it("should handle union types (output)", () => {
+    const schema = z.union([
+      z.object({ type: z.literal("A"), value: z.string() }),
+      z.object({ type: z.literal("B"), value: z.number() }),
+    ]);
+    const gqlType = zodToGraphQLOutputType(schema, "UnionOutput");
+    expect(gqlType).toBeInstanceOf(GraphQLNonNull);
+    expect((gqlType as any).ofType.constructor.name).toBe("GraphQLUnionType");
+  });
 });
 
 describe("zodToGraphQLArgs", () => {
@@ -109,5 +136,24 @@ describe("zodToGraphQLArgs", () => {
     // optionalな場合はnullableなのでGraphQLNonNullでラップされない
     expect(args.age.type).toBe(GraphQLFloat);
   });
-});
 
+  it("should throw error for non-object schema", () => {
+    const schema = z.string();
+    expect(() => zodToGraphQLArgs(schema)).toThrow(
+      "Input schema must be a ZodObject",
+    );
+  });
+
+  it("should handle complex nested objects", () => {
+    const schema = z.object({
+      user: z.object({
+        name: z.string(),
+        age: z.number().optional(),
+      }),
+      tags: z.array(z.string()),
+    });
+    const args = zodToGraphQLArgs(schema);
+    expect(args).toHaveProperty("user");
+    expect(args).toHaveProperty("tags");
+  });
+});

@@ -16,6 +16,7 @@
     "dev": "tsc --watch",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write ."
@@ -36,11 +37,11 @@
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
     "@types/node": "^22.7.5",
+    "@vitest/coverage-v8": "^4.0.6",
     "typescript": "^5.6.3",
-    "vitest": "^2.1.1"
+    "vitest": "^4.0.6"
   },
   "peerDependencies": {
     "zod": "^4.1.12"
   }
 }
-
