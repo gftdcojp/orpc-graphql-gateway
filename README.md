@@ -1,30 +1,30 @@
 # @gftdcojp/orpc-graphql-gateway
 
-oRPC routerからGraphQL schemaを自動生成するライブラリ。**orpcOpenapiと同じ感覚**でGraphQLを公開できます。
+Automatically generate GraphQL schemas from oRPC routers. Use GraphQL with the same ease as `orpcOpenapi`.
 
-## 概要
+## Overview
 
-**「routerにだけ書けば、oRPC・OpenAPI・GraphQLの3つが同じ型情報から出る」**
+**"Write once in your router, get oRPC, OpenAPI, and GraphQL from the same type information."**
 
-oRPCのrouterを唯一の真実（single source of truth）として、GraphQL schemaを自動生成します。これにより、型安全性を保ちながら、GraphQLの汎用性も活用できます。
+`@gftdcojp/orpc-graphql-gateway` treats your oRPC router as the single source of truth and automatically generates GraphQL schemas. This allows you to leverage GraphQL's versatility while maintaining type safety.
 
-## 特徴
+## Features
 
-- 🎯 **一元管理**: oRPC routerにすべての手続きを集約
-- 🔄 **自動変換**: ZodスキーマからGraphQL型への自動変換
-- 🚀 **型安全**: TypeScriptの型システムを活用
-- 🔌 **簡単統合**: Next.jsなどのフレームワークに簡単に統合可能
-- 📦 **orpcOpenapiと同じ感覚**: 同じメンタルモデルでGraphQLを公開
+- 🎯 **Single Source of Truth**: Centralize all procedures in your oRPC router
+- 🔄 **Automatic Conversion**: Automatic conversion from Zod schemas to GraphQL types
+- 🚀 **Type Safe**: Leverages TypeScript's type system
+- 🔌 **Easy Integration**: Simple integration with frameworks like Next.js
+- 📦 **Same Mental Model**: Use GraphQL with the same ease as `orpcOpenapi`
 
-## インストール
+## Installation
 
 ```bash
 pnpm add @gftdcojp/orpc-graphql-gateway graphql graphql-yoga
 ```
 
-## 基本的な使い方
+## Getting Started
 
-### 1. oRPC routerの定義
+### 1. Define your oRPC router
 
 ```typescript
 // src/server/orpc.ts
@@ -41,7 +41,7 @@ export const router = orpc.router({
 });
 ```
 
-### 2. GraphQL Gatewayの生成
+### 2. Generate GraphQL Gateway
 
 ```typescript
 // src/server/graphql.ts
@@ -53,7 +53,7 @@ export const gql = orpcGraphQL(router);
 export const { schema, sdl, createHandler } = gql;
 ```
 
-### 3. Next.js統合
+### 3. Integrate with Next.js
 
 ```typescript
 // src/app/api/graphql/route.ts
@@ -62,42 +62,42 @@ import { createHandler } from "@/server/graphql";
 export { createHandler as GET, createHandler as POST };
 ```
 
-これで `/api/graphql` が立ちます。
+That's it! Your GraphQL endpoint is now available at `/api/graphql`.
 
-## API
+## API Reference
 
 ### `orpcGraphQL(router, options?)`
 
-oRPC routerからGraphQL Gatewayを生成します。
+Generates a GraphQL Gateway from an oRPC router.
 
-**パラメータ:**
+**Parameters:**
 
-- `router`: oRPC routerオブジェクト
-- `options`: オプション設定
-  - `namingPolicy`: 名前解決ポリシー（`"flat"` | `"nested"`）
-  - `isQueryFn`: クエリ判定のカスタム関数
-  - `federation`: Federation設定
-    - `enabled`: Federationを有効にする
-    - `keyBy`: エンティティのキー設定
+- `router`: oRPC router object
+- `options`: Optional configuration
+  - `namingPolicy`: Naming resolution policy (`"flat"` | `"nested"`)
+  - `isQueryFn`: Custom function to determine if a procedure is a query
+  - `federation`: Federation configuration
+    - `enabled`: Enable Federation
+    - `keyBy`: Entity key configuration
 
-**戻り値:** `OrpcGraphQLResult`
+**Returns:** `OrpcGraphQLResult`
 
 ```typescript
 interface OrpcGraphQLResult {
-  /** GraphQL schemaオブジェクト */
+  /** GraphQL schema object */
   schema: GraphQLSchema;
-  /** GraphQL SDL（文字列） */
+  /** GraphQL SDL (string) */
   sdl: string;
-  /** FederatedなSDL（federation有効時のみ） */
+  /** Federated SDL (only when federation is enabled) */
   subgraphSDL?: string;
-  /** HTTPハンドラを作成する関数 */
+  /** Function to create HTTP handler */
   createHandler: () => RequestHandler;
 }
 ```
 
-## Federation対応
+## Federation Support
 
-Federationを有効にする場合は、オプションで設定できます：
+Enable Federation with optional configuration:
 
 ```typescript
 const gql = orpcGraphQL(router, {
@@ -109,11 +109,11 @@ const gql = orpcGraphQL(router, {
   },
 });
 
-// Apollo Gatewayに投げる
+// Use with Apollo Gateway
 export const subgraphSDL = gql.subgraphSDL;
 ```
 
-## Zod → GraphQL 変換ルール
+## Zod → GraphQL Conversion Rules
 
 | Zod               | GraphQL                    |
 | ----------------- | -------------------------- |
@@ -126,16 +126,16 @@ export const subgraphSDL = gql.subgraphSDL;
 | `z.nullable(x)`   | nullable                   |
 | `z.union(...)`    | `GraphQLUnionType` (output) |
 
-## 名前解決ポリシー
+## Naming Policy
 
-ネストされたrouterはフラットな名前に変換されます：
+Nested routers are converted to flat names:
 
 - `user.get` → `user_get`
 - `post.create` → `post_create`
 
-## 下位レベルAPI
+## Lower-Level API
 
-必要に応じて、より低レベルのAPIも利用できます：
+For advanced use cases, you can use lower-level APIs:
 
 ```typescript
 import { buildGraphQLSchemaFromOrpc } from "@gftdcojp/orpc-graphql-gateway";
@@ -143,6 +143,10 @@ import { buildGraphQLSchemaFromOrpc } from "@gftdcojp/orpc-graphql-gateway";
 const schema = buildGraphQLSchemaFromOrpc(router);
 ```
 
-## ライセンス
+## Documentation
+
+For more information, see the [oRPC OpenAPI Getting Started Guide](https://orpc.unnoq.com/docs/openapi/getting-started).
+
+## License
 
 MIT
