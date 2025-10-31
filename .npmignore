@@ -1,0 +1,46 @@
+# Source files
+src/
+*.ts
+!dist/**/*.d.ts
+
+# Test files
+*.test.ts
+coverage/
+.vitest/
+
+# Development files
+.vscode/
+.idea/
+*.log
+.DS_Store
+.env
+.env.local
+*.tsbuildinfo
+
+# Build tools
+tsconfig.json
+vitest.config.ts
+biome.json
+
+# Examples (keep docs but not source)
+examples/*.ts
+examples/package.json
+examples/VERIFICATION.md
+!examples/README.md
+!examples/nextjs-integration.md
+
+# Documentation (keep README)
+COVERAGE.md
+story.jsonnet
+
+# Git
+.git/
+.gitignore
+
+# Node
+node_modules/
+pnpm-lock.yaml
+
+# Next.js
+.next/
+

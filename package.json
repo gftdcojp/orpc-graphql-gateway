@@ -5,6 +5,17 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "examples/README.md",
+    "examples/nextjs-integration.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gftdcojp/orpc-graphql.git"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.js",
